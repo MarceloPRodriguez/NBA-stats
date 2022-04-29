@@ -1,5 +1,6 @@
 from ast import List
 from urllib import response
+from click import get_binary_stream
 from requests import get
 
 BASE_URL = "http://data.nba.net"
@@ -67,15 +68,33 @@ def get_leagueRosterPlayers():
   #print(lista)
 
   for players in player:
-    primeiro_nome = players['firstName']
-    segundo_nome = players['lastName']
-    nome_completo = (f"{primeiro_nome} {segundo_nome}")
-    camisa = players['jersey']
-    posicao = players["pos"]
+    first_name  = players['firstName']
+    second_name = players['lastName']
+    name_complete = (f"{first_name} {second_name}")
+    jersey = players['jersey']
+    position = players["pos"]
 
-    print(f"{nome_completo}  | {posicao} | {camisa}")
-
-
+    print(f"{name_complete}  | {position} | {jersey}")
+    
+# Lista todos os técnicos da liga
+def get_leagueRosterCoaches():
+    coaches = get_links()["leagueRosterCoaches"]
+    data = get(BASE_URL+coaches).json()
+    coach = data['league']['standard']
+    
+    for coaches in coach:        
+            first_name = coaches['firstName']
+            second_name = coaches['lastName']
+            name_complete = (f"{first_name} {second_name}")
+            team = coaches['teamSitesOnly']['teamCode']
+            assist_coach = coaches['isAssistant'] 
+            
+            if assist_coach is False:                             
+                print(f"{name_complete} | {team}")    
+                     
+                       
+     
+        
 while True:
     print("########################\n")
     print("SEJA BEM VINDO!!!! DADOS NBA \n")
@@ -83,6 +102,7 @@ while True:
     print("2 - Ver Times por PPG\n")
     print("3 - Listar Jogadores da Liga\n")
     print("4 - Listar todos os times da liga\n")
+    print("5 - Listar todos os técnicos da liga\n")
     user_choice = input("Opção: ")
 
     if user_choice == "1":
@@ -93,5 +113,7 @@ while True:
         get_leagueRosterPlayers()
     elif user_choice == "4":
         teams()
+    elif user_choice == "5":
+        get_leagueRosterCoaches()
     else:
         continue
